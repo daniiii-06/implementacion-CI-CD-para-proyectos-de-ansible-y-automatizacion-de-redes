@@ -9,6 +9,7 @@ ENV PYTHONUNBUFFERED 1
 RUN apt-get update && apt-get install -y --no-install-recommends \
     openssh-client \
     sshpass \
+    iputils-ping \
     && rm -rf /var/lib/apt/lists/*
 
 # Instalar Ansible y librerías de Python para interacción con redes

@@ -1,0 +1,16 @@
+---
+- name: Despliegue de VPN Full-Mesh (IPSec/GRE/OSPF)
+  hosts: routers
+  gather_facts: false
+  tasks:
+    - name: Incluir rol de configuración base
+      include_role:
+        name: base_config
+
+    - name: Incluir rol de túneles GRE y seguridad
+      include_role:
+        name: gre_tunnel
+
+    - name: Incluir rol OSPF
+      include_role:
+        name: ospf_routing

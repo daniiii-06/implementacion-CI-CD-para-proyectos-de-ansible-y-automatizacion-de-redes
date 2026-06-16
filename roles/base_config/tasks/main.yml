@@ -1,0 +1,30 @@
+---
+- name: Configuración Base - Loopback e Interfaces Físicas
+  block:
+    - name: Crear interface Loopback (Bridge vacío)
+      community.routeros.command:
+        commands:
+          - /interface bridge add name=loopback0
+      ignore_errors: yes
+
+    - name: Asignar IP a la interface Loopback
+      community.routeros.command:
+        commands:
+          - /ip address add address={{ loopback_ip }} interface=loopback0
+      ignore_errors: yes
+
+    - name: Asignar IPs a las interfaces físicas (Underlay)
+      community.routeros.command:
+        commands:
+          - /ip address add address={{ item.ip }} interface={{ item.name }}
+      loop: "{{ underlay_interfaces }}"
+      ignore_errors: yes
+      
+    - name: Configurar Hostname
+      community.routeros.command:
+        commands:
+          - /system identity set name={{ inventory_hostname }}
+  rescue:
+    - name: Fallo en la configuración base
+      fail:
+        msg: "No se pudo aplicar la configuración base en {{ inventory_hostname }}"
