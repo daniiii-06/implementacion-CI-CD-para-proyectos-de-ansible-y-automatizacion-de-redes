@@ -18,5 +18,8 @@ RUN pip install --no-cache-dir ansible paramiko netmiko routeros-api
 # Crear directorio de trabajo
 WORKDIR /ansible
 
+# Copiar los archivos de Ansible al contenedor
+COPY . /ansible/
+
 # Comando por defecto
 CMD ["/bin/bash"]

@@ -1,4 +1,10 @@
 ---
+# ==============================================================================
+# Playbook Maestro: Despliegue de Topología VPN Full-Mesh
+# ==============================================================================
+# Este playbook orquesta la configuración completa de la red. En lugar de tener
+# todo el código aglomerado aquí, utiliza 'include_role' para llamar a los 
+# diferentes módulos lógicos, manteniendo el código limpio y reusable.
 - name: Despliegue de VPN Full-Mesh (IPSec/GRE/OSPF)
   hosts: routers
   gather_facts: false
