@@ -14,21 +14,21 @@
     - name: Asignar IP a la interface Loopback
       community.routeros.command:
         commands:
-          - /ip address add address={{ loopback_ip }} interface=loopback0
+          - /ip address add address="{{ loopback_ip }}" interface=loopback0
       when: loopback_ip is defined
       ignore_errors: yes
 
     - name: Asignar IPs a las interfaces físicas (Underlay)
       community.routeros.command:
         commands:
-          - /ip address add address={{ item.ip }} interface={{ item.name }}
+          - /ip address add address="{{ item.ip }}" interface="{{ item.name }}"
       loop: "{{ underlay_interfaces }}"
       ignore_errors: yes
       
     - name: Configurar Hostname
       community.routeros.command:
         commands:
-          - /system identity set name={{ inventory_hostname }}
+          - /system identity set name="{{ inventory_hostname }}"
       notify: Guardar configuración
 
   rescue:

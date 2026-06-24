@@ -4,14 +4,14 @@
     - name: Crear túneles GRE con IPSec dinámico (Profile y Secret)
       community.routeros.command:
         commands:
-          - /interface gre add name={{ item.name }} local-address={{ item.local_ip }} remote-address={{ item.remote_ip }} ipsec-secret={{ ipsec_secret }}
+          - /interface gre add name="{{ item.name }}" local-address="{{ item.local_ip }}" remote-address="{{ item.remote_ip }}" ipsec-secret="{{ ipsec_secret }}" allow-fast-path=no
       loop: "{{ gre_tunnels }}"
       ignore_errors: yes
 
     - name: Asignar IPs virtuales a túneles GRE
       community.routeros.command:
         commands:
-          - /ip address add address={{ item.tunnel_ip }} interface={{ item.name }}
+          - /ip address add address="{{ item.tunnel_ip }}" interface="{{ item.name }}"
       loop: "{{ gre_tunnels }}"
       ignore_errors: yes
   rescue:
