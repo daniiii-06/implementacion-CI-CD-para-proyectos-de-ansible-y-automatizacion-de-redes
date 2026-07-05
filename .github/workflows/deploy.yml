@@ -1,0 +1,33 @@
+name: Continuous Deployment (CD) Network
+
+on:
+  # El despliegue real solo debe ocurrir cuando los cambios se fusionan en main
+  push:
+    branches:
+      - main
+  # workflow_dispatch permite disparar el despliegue manualmente desde la interfaz web de GitHub
+  workflow_dispatch: 
+
+jobs:
+  network-deployment:
+    name: Despliegue Automatizado de Configuraciones
+    runs-on: self-hosted
+    
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v3
+
+      - name: Preparar Entorno de Red
+        run: |
+          python3 -m pip install --upgrade pip --break-system-packages
+          # Instalamos las librerías necesarias para que Ansible pueda conectarse a Cisco y MikroTik
+          python3 -m pip install ansible paramiko netmiko routeros-api --break-system-packages
+
+      - name: Despliegue en Producción (Aplicación de Configuraciones)
+        run: |
+          echo "Iniciando la automatización de la topología de red..."
+          echo "Aplicando configuraciones a los routers de GNS3..."
+          
+          # Se ejecuta el playbook REAL, SIN la bandera --check. 
+          # Esto automatiza la aplicación de configuraciones de red de forma definitiva.
+          ansible-playbook -i inventory/hosts.yml site.yml
