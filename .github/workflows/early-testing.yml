@@ -1,0 +1,45 @@
+name: Early Testing Pipeline
+
+on:
+  # Se ejecuta en Pull Requests para detectar errores ANTES de fusionar a main
+  pull_request:
+    branches:
+      - main
+      - master
+  # También se ejecuta cuando trabajas en cualquier otra rama que no sea main
+  push:
+    branches-ignore:
+      - main
+      - master
+
+jobs:
+  early-error-detection:
+    name: Pruebas y Detección Temprana
+    runs-on: self-hosted
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v3
+
+      - name: Preparar Entorno de Pruebas
+        run: |
+          python3 -m pip install --upgrade pip --break-system-packages
+          python3 -m pip install ansible yamllint ansible-lint --break-system-packages
+
+      - name: Prueba 1 - Linting de YAML
+        run: |
+          echo "Buscando errores de formato y sintaxis en archivos YAML..."
+          # Usamos una configuración relajada para no fallar por cosas menores,
+          # pero sí detectar errores estructurales graves tempranamente.
+          yamllint -d "{extends: relaxed, rules: {line-length: disable}}" . || echo "Advertencias detectadas en YAML."
+
+      - name: Prueba 2 - Ansible Lint (Mejores Prácticas)
+        run: |
+          echo "Analizando el playbook en busca de malas prácticas, módulos obsoletos o errores lógicos..."
+          # ansible-lint detecta errores de lógica antes de que el código corra.
+          ansible-lint site.yml || echo "Advertencias de Ansible Lint detectadas."
+
+      - name: Prueba 3 - Verificación de Sintaxis Estricta
+        run: |
+          echo "Simulando la compilación del playbook para detectar errores fatales..."
+          # Este paso SI fallará el pipeline si el código de Ansible está roto.
+          ansible-playbook --syntax-check -i inventory/hosts.yml site.yml
