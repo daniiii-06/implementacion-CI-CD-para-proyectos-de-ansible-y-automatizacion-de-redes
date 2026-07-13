@@ -24,10 +24,18 @@ jobs:
           python3 -m pip install ansible paramiko netmiko routeros-api --break-system-packages
 
       - name: Despliegue en Producción (Aplicación de Configuraciones)
+        env:
+          VAULT_PASS: ${{ secrets.ANSIBLE_VAULT_PASSWORD }}
         run: |
           echo "Iniciando la automatización de la topología de red..."
-          echo "Aplicando configuraciones a los routers de GNS3..."
           
-          # Se ejecuta el playbook REAL, SIN la bandera --check. 
-          # Esto automatiza la aplicación de configuraciones de red de forma definitiva.
-          ansible-playbook -i inventory/hosts.yml site.yml
+          # Manejo seguro de credenciales (Punto 2.c): 
+          # Creamos el archivo de bóveda temporalmente desde un secreto seguro de GitHub
+          echo "$VAULT_PASS" > .vault_pass
+          
+          echo "Aplicando configuraciones a los routers de GNS3..."
+          # Se ejecuta el playbook REAL usando la credencial
+          ansible-playbook -i inventory/hosts.yml site.yml --vault-password-file .vault_pass
+          
+          # Limpieza por seguridad para no dejar rastros en el runner local
+          rm -f .vault_pass

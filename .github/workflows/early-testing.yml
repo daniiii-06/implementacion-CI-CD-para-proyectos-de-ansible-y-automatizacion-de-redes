@@ -39,7 +39,14 @@ jobs:
           ansible-lint site.yml || echo "Advertencias de Ansible Lint detectadas."
 
       - name: Prueba 3 - Verificación de Sintaxis Estricta
+        env:
+          VAULT_PASS: ${{ secrets.ANSIBLE_VAULT_PASSWORD }}
         run: |
           echo "Simulando la compilación del playbook para detectar errores fatales..."
-          # Este paso SI fallará el pipeline si el código de Ansible está roto.
-          ansible-playbook --syntax-check -i inventory/hosts.yml site.yml
+          
+          # Inyección del secreto para descifrar Ansible Vault en pruebas
+          echo "$VAULT_PASS" > .vault_pass
+          ansible-playbook --syntax-check -i inventory/hosts.yml site.yml --vault-password-file .vault_pass
+          
+          # Limpiar credencial
+          rm -f .vault_pass
