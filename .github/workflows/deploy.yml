@@ -13,6 +13,11 @@ jobs:
     name: Despliegue Automatizado de Configuraciones
     runs-on: self-hosted
     
+    # Lógica para despliegue condicional (Punto 2.e):
+    # El despliegue a producción solo ocurre si el commit NO contiene la etiqueta [skip deploy].
+    # Esto da control a los ingenieros para subir cambios urgentes de documentación sin tocar la red.
+    if: "!contains(github.event.head_commit.message, '[skip deploy]')"
+    
     steps:
       - name: Checkout del código
         uses: actions/checkout@v3
