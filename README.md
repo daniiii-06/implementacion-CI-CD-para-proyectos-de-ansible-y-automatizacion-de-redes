@@ -55,3 +55,10 @@ El diseño modular de este proyecto fue pensado específicamente para tener un *
    - Agregar la IP de administración de `R4` en el archivo `inventory/hosts.yml`.
    - Crear un archivo de variables nuevo `host_vars/R4.yml` declarando sus túneles GRE y Loopbacks.
    - Ansible automáticamente recogerá el nuevo archivo, lo integrará al loop y armará el Full-Mesh incluyendo a `R4`.
+
+## Integración y Despliegue Continuo (CI/CD)
+En la **Fase 2** del proyecto, se implementaron flujos de trabajo automatizados usando GitHub Actions y un Self-Hosted Runner local, aplicando principios de DevOps:
+
+- **Early Testing (Shift-Left):** Un pipeline que se ejecuta en los Pull Requests para detectar errores de sintaxis y validar las mejores prácticas (`yamllint`, `ansible-lint`) antes de fusionar el código.
+- **Despliegue Continuo:** Un pipeline que aplica automáticamente las configuraciones a la red GNS3 cuando se aprueban cambios en la rama `main`.
+- **Manejo Seguro de Credenciales:** La contraseña de Ansible Vault se inyecta de manera efímera a través de los *Secrets* de GitHub, evitando dejar credenciales expuestas en texto plano.
