@@ -41,12 +41,14 @@ jobs:
       - name: Prueba 3 - Verificación de Sintaxis Estricta
         env:
           VAULT_PASS: ${{ secrets.ANSIBLE_VAULT_PASSWORD }}
+          ANSIBLE_STDOUT_CALLBACK: yaml # Formato estructurado para depuración
+          ANSIBLE_FORCE_COLOR: "1"      # Mantiene colores en los logs de GitHub Actions
         run: |
           echo "Simulando la compilación del playbook para detectar errores fatales..."
           
           # Inyección del secreto para descifrar Ansible Vault en pruebas
           echo "$VAULT_PASS" > .vault_pass
-          ansible-playbook --syntax-check -i inventory/hosts.yml site.yml --vault-password-file .vault_pass
+          ansible-playbook --syntax-check -i inventory/hosts.yml site.yml -v --vault-password-file .vault_pass
           
           # Limpiar credencial
           rm -f .vault_pass

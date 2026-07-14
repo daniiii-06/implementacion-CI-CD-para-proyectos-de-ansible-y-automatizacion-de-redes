@@ -31,6 +31,8 @@ jobs:
       - name: Despliegue en Producción (Aplicación de Configuraciones)
         env:
           VAULT_PASS: ${{ secrets.ANSIBLE_VAULT_PASSWORD }}
+          ANSIBLE_STDOUT_CALLBACK: yaml # Punto 3.a: Formato de log estructurado y legible
+          ANSIBLE_FORCE_COLOR: "1"      # Punto 3.a: Forzar colores en los logs de GitHub Actions
         run: |
           echo "Iniciando la automatización de la topología de red..."
           
@@ -39,8 +41,8 @@ jobs:
           echo "$VAULT_PASS" > .vault_pass
           
           echo "Aplicando configuraciones a los routers de GNS3..."
-          # Se ejecuta el playbook REAL usando la credencial
-          ansible-playbook -i inventory/hosts.yml site.yml --vault-password-file .vault_pass
+          # Se ejecuta el playbook REAL usando la credencial y -v para mayor detalle en caso de error
+          ansible-playbook -i inventory/hosts.yml site.yml -v --vault-password-file .vault_pass
           
           # Limpieza por seguridad para no dejar rastros en el runner local
           rm -f .vault_pass
