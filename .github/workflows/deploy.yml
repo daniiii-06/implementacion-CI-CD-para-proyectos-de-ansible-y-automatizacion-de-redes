@@ -46,3 +46,23 @@ jobs:
           
           # Limpieza por seguridad para no dejar rastros en el runner local
           rm -f .vault_pass
+
+      - name: Notificación de CI/CD por Correo Electrónico (Punto 3.b)
+        if: always() # Se ejecuta siempre para avisarte si falló o fue exitoso
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: Reporte de Despliegue GNS3 - Estado ${{ job.status }}
+          to: ${{ secrets.MAIL_TO }}
+          from: Bot de Integración Continua
+          body: |
+            El despliegue de la red GNS3 ha terminado de ejecutarse.
+            
+            - Estado final del pipeline: ${{ job.status }}
+            - Repositorio: ${{ github.repository }}
+            
+            Si falló, por favor entra a GitHub y revisa los logs de ejecución.
