@@ -1,9 +1,9 @@
 FROM python:3.11-slim
 
 # Evitar que Python escriba archivos .pyc
-ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONDONTWRITEBYTECODE=1
 # Deshabilitar buffer para que los logs de Ansible se muestren en tiempo real
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONUNBUFFERED=1
 
 # Instalar dependencias del sistema operativo (necesarias para criptografía y ssh)
 RUN apt-get update && apt-get install -y --no-install-recommends \
